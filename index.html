@@ -22,15 +22,19 @@
 
 <body>
     <div class="center"></div>
+    <div id="sound"></div>
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io.connect(document.location.origin);
     socket.on('teamodoro:time', function (data) {
-        console.log(data);
         document.querySelector('.center').innerHTML = data.time;
         document.querySelector('body').style.backgroundColor = data.color;
+
+        if (data.playSound) {
+            document.querySelector('#sound').innerHTML = '<audio autoplay="autoplay"><source src="' + data.playSound + '.mp3" type="audio/mpeg" /><source src="' + data.playSound + '.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="' + data.playSound +'.mp3" /></audio>';
+        }
     });
 </script>
 </html>

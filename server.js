@@ -1,4 +1,5 @@
-var app = require('express')(),
+var express = require('express'),
+    app = express(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     _ = require('lodash');
@@ -6,6 +7,9 @@ var app = require('express')(),
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/index.html');
 });
+
+app.use(express.static(__dirname + '/public'));
+
 
 server.listen(1339);
 
@@ -25,10 +29,16 @@ var timer = _.clone(work_timer);
 setInterval(function() {
     timer.time-= 1;
 
-    io.sockets.emit('teamodoro:time', {
+
+    var event = {
         time: timeString(timer.time),
         color: timer.color
-    });
+    };
+
+    if (timer.time <= 0 ) {
+        event.playSound = 'ding';
+    }
+    io.sockets.emit('teamodoro:time', event);
 
     if (timer.time <= 0) {
         changeState();
