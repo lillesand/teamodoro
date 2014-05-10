@@ -22,7 +22,7 @@ var pause_timer = {
 };
 
 var work_timer = {
-    time: 35 * 60,
+    time: 25 * 60,
     state: 'work',
     color: '#CCFB5D'
 };
