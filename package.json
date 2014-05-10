@@ -1,0 +1,10 @@
+{
+    "name": "teamodoro",
+    "description": "Collaborative pomodoro. Why not?",
+    "author": "jvl",
+    "dependencies": {
+        "express": "4.1.x",
+        "socket.io": "0.9.x"
+    },
+    "engine": "node >= 0.10.26"
+}
