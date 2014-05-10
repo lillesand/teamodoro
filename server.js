@@ -15,6 +15,32 @@ app.get('/', function(req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
+var pomodorians = 0;
+
+// Pomodoros
+io.sockets.on('connection', function(socket) {
+    socket.on('teamodoro:subscribe', function(data) {
+        pomodorians++;
+        sendStats();
+        socket.set('client', true);
+        socket.join(data.room);
+    });
+
+    socket.on('teamodoro:subscribe:statistics', function(data) {
+        socket.join('statistics');
+        sendStats();
+    });
+
+    socket.on('disconnect', function () {
+        if (socket.store.data.client) {
+            // Only count statistics for clients
+            pomodorians--;
+            sendStats();
+        }
+
+    });
+});
+
 var pause_timer = {
     time: 5 * 60,
     state: 'pause',
@@ -31,7 +57,6 @@ var timer = _.clone(work_timer);
 setInterval(function() {
     timer.time-= 1;
 
-
     var event = {
         time: timeString(timer.time),
         color: timer.color
@@ -40,7 +65,7 @@ setInterval(function() {
     if (timer.time <= 0 ) {
         event.playSound = 'ding';
     }
-    io.sockets.emit('teamodoro:time', event);
+    io.sockets.in('pomodoro:default').emit('teamodoro:time', event);
 
     if (timer.time <= 0) {
         changeState();
@@ -64,4 +89,16 @@ function changeState() {
     else {
         timer = _.clone(pause_timer);
     }
+}
+
+
+
+// Statistics
+
+function sendStats() {
+
+    io.sockets.in('statistics').emit('teamodoro:statistics', {
+        users: pomodorians
+    });
+
 }

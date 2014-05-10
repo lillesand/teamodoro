@@ -28,6 +28,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io.connect(document.location.origin);
+
+    socket.emit('teamodoro:subscribe', { room: 'pomodoro:default' });
+
     socket.on('teamodoro:time', function (data) {
         document.querySelector('.center').innerHTML = data.time;
         document.querySelector('body').style.backgroundColor = data.color;

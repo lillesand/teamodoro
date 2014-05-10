@@ -1,0 +1,38 @@
+<!html>
+<html>
+
+<head>
+    <style>
+        html {
+            font-family: 'Droid Sans', sans-serif;
+        }
+
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 150px;
+            margin-top: -0.5em;
+            margin-left: -150px;
+        }​
+    </style>
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+<div class="center"></div>
+<div id="sound"></div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect(document.location.origin);
+
+    socket.emit('teamodoro:subscribe:statistics');
+
+    socket.on('teamodoro:statistics', function (data) {
+        document.querySelector('.center').innerHTML = data.users;
+    });
+</script>
+</html>
