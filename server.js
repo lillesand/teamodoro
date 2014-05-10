@@ -1,6 +1,7 @@
 var app = require('express')(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    _ = require('lodash');
 
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/index.html');
@@ -8,18 +9,47 @@ app.get('/', function(req, res) {
 
 server.listen(1339);
 
-var timer = 15 * 60;
+var pause_timer = {
+    time: 0.2 * 60,
+    state: 'pause',
+    color: '#C24641'
+};
 
-io.sockets.on('connection', function(socket) {
-    console.log('hello mister');
-});
+var work_timer = {
+    time: 0.1 * 60,
+    state: 'work',
+    color: '#CCFB5D'
+};
 
+var timer = _.clone(work_timer);
 setInterval(function() {
-    timer -= 1;
+    timer.time-= 1;
+
+    io.sockets.emit('teamodoro:time', {
+        time: timeString(timer.time),
+        color: timer.color
+    });
+
+    if (timer.time <= 0) {
+        changeState();
+    }
+}, 1000);
+
+function timeString(timer) {
     var minutes = Math.floor(timer / 60);
     var seconds = timer % 60;
+    if ((seconds + "").length == 1) {
+        seconds = "0" + seconds;
+    }
 
-    io.sockets.emit('teamodoro:time', minutes + ':' + seconds);
+    return minutes + ':' + seconds;
+}
 
-    console.log(minutes + ':' + seconds);
-}, 1000);
+function changeState() {
+    if (timer.state == 'pause') {
+        timer = _.clone(work_timer);
+    }
+    else {
+        timer = _.clone(pause_timer);
+    }
+}
