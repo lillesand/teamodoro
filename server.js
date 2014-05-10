@@ -16,13 +16,13 @@ app.get('/', function(req, res) {
 app.use(express.static(__dirname + '/public'));
 
 var pause_timer = {
-    time: 0.2 * 60,
+    time: 5 * 60,
     state: 'pause',
     color: '#C24641'
 };
 
 var work_timer = {
-    time: 0.1 * 60,
+    time: 35 * 60,
     state: 'work',
     color: '#CCFB5D'
 };
