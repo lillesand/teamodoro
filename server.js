@@ -4,14 +4,16 @@ var express = require('express'),
     io = require('socket.io').listen(server),
     _ = require('lodash');
 
+var port = process.env.PORT || 1339;
+server.listen(port, function() {
+    console.log('listening on port ' + port);
+});
+
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/index.html');
 });
 
 app.use(express.static(__dirname + '/public'));
-
-
-server.listen(1339);
 
 var pause_timer = {
     time: 0.2 * 60,
